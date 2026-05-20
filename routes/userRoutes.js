@@ -15,14 +15,20 @@ router.post('/onboarding', async (req, res) => {
     }
 });
 
+// Fetch all users for the Dashboard table newest first
 router.get('/dashboard-data', async (req, res) => {
-    try {
-        const users = (await User.find()).sort({ createdAt: -1 });
-        res.status(200).json(users);
-    } catch (error) {
-        console.error('Error fetching users:', error);
-        res.status(500).json({ message: 'Server error fetching dashboard data' });
-    }
+  try {
+    // 1. Fetch the users from the database
+    const users = await User.find();
+    
+    // 2. Sort them using standard JavaScript (Newest first)
+    users.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    res.status(200).json(users);
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ message: 'Server error fetching dashboard data' });
+  }
 });
 
 module.exports = router;
